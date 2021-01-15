@@ -1,0 +1,112 @@
+<page-header title="New Product" [nav]="['home','products','new']"></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+    <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+      <mat-card>
+        <mat-card-title>New Product</mat-card-title>
+  
+        <form [formGroup]="productForm" class="form-field-full">
+          <div fxLayout="row wrap" fxLayoutGap="8px grid">
+            
+            <div fxFlex="50" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input matInput placeholder="Product Name" formControlName="name"
+                       required>
+                <mat-error *ngIf="productForm.get('name').invalid">
+                  {{'validations.required' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+  
+            <div fxFlex="50" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category" placeholder="Category" multiple required>
+                    <mat-option *ngFor="let cate of categoryList" [value]="cate.name">{{cate.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="productForm.get('category').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+              </mat-form-field>
+            </div>
+  
+            <div fxFlex="50" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Thumbnail</mat-label>
+                <input matInput placeholder="Thumbnail" type="text"
+                       formControlName="thumbnail" required readonly>
+                <input type="file" #thumbnailImage (change)="thumpnailUpladChange($event)" required hidden="true">
+                <button mat-button matSuffix mat-icon-button aria-label="Upload"
+                  (click)="thumbnailImage.click()">
+                  <mat-icon>folder</mat-icon>
+                </button>
+                <mat-error *ngIf="productForm.get('thumbnail').invalid">
+                  {{'validations.required' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Product Image</mat-label>
+                  <input matInput placeholder="Product Image" type="text"
+                         formControlName="product_img" required readonly>
+                  <input type="file" #productImage (change)="productImageUpladChange($event)" required hidden="true">
+                  <button mat-button matSuffix mat-icon-button aria-label="Upload"
+                    (click)="productImage.click()">
+                    <mat-icon>folder</mat-icon>
+                  </button>
+                  <mat-error *ngIf="productForm.get('product_img').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Description</mat-label>
+                  <textarea matInput placeholder="Description"
+                  formControlName="description" required></textarea>
+                  <mat-error *ngIf="productForm.get('description').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Recommendation</mat-label>
+                  <mat-select formControlName="recommendation" placeholder="Recommendation" multiple>
+                      <mat-option *ngFor="let cate of categoryList" [value]="cate.name">{{cate.name}}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="productForm.get('recommendation').invalid">
+                      {{'validations.required' | translate}}
+                    </mat-error>
+                </mat-form-field>
+              </div>
+    
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Recipe</mat-label>
+                  <input matInput placeholder="Recipe" type="text"
+                         formControlName="recipe" readonly>
+                  <input type="file" #recipeImage (change)="recipeUpladChange($event)" required hidden="true">
+                  <button mat-button matSuffix mat-icon-button aria-label="Upload"
+                    (click)="recipeImage.click()">
+                    <mat-icon>folder</mat-icon>
+                  </button>
+                  <mat-error *ngIf="productForm.get('recipe').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+          </div>
+  
+          <button mat-raised-button color="primary" class="m-t-8">Save</button>
+        </form>
+  
+      </mat-card>
+    </div>
+</div>

@@ -1,0 +1,236 @@
+<page-header title="{{ isEditMode ? 'Edit Trip' : 'New Trip' }}" [nav]="['home', 'trips', 'new']"></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+    <div fxFlex="100" class="matero-col">
+        <mat-card>
+            <mat-card-title>
+                {{ isEditMode ? "Edit Trip" : "New Trip" }}
+            </mat-card-title>
+      
+            <form [formGroup]="tripFrom" (submit)="onFormSubmit($event)" class="form-field-full" >
+              <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                <div fxFlex="25" fxFlex.lt-sm="100" *ngIf="isAdmin">
+                    <mat-form-field>
+                        <mat-label>Depo</mat-label>
+                        <mat-select formControlName="depo_id"
+                            placeholder="Depo" required>
+                            <mat-option *ngFor="let user of depoUserList" [value]="user._id">
+                                {{ user.first_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="tripFrom.get('depo_id').invalid">
+                            {{ "validations.required" | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                  <div fxFlex="25" fxFlex.lt-sm="100">
+                      <mat-form-field>
+                          <mat-label>User Type</mat-label>
+                          <mat-select formControlName="user_type" (selectionChange)="userTypeChanged()"
+                              placeholder="User Type" required>
+                              <mat-option [value]="UserRole.DELIVERY_BOY" >
+                                  {{ UserRole.DELIVERY_BOY | titlecase }}
+                              </mat-option>
+                              <!-- <mat-option [value]="UserRole.HAWKER" >
+                                {{ UserRole.HAWKER | titlecase }}
+                            </mat-option> -->
+                          </mat-select>
+                          <mat-error *ngIf="tripFrom.get('user_type').invalid">
+                              {{ "validations.required" | translate }}
+                          </mat-error>
+                      </mat-form-field>
+                  </div>
+      
+                  <div fxFlex="25" fxFlex.lt-sm="100">
+                    <mat-form-field>
+                        <mat-label>Delivery Boy</mat-label>
+                        <mat-select formControlName="delivery_boy_id"
+                            placeholder="Delivery Boy" required>
+                            <mat-option *ngFor="let user of userList" [value]="user._id">
+                                {{ user.first_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="tripFrom.get('delivery_boy_id').invalid">
+                            {{ "validations.required" | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div fxFlex="25" fxFlex.lt-sm="100">
+                    <mat-form-field>
+                        <mat-label>Vehicle</mat-label>
+                        <mat-select formControlName="vehicle_id"
+                            placeholder="Vehicle" required>
+                            <mat-option *ngFor="let vehicle of vehicleList" [value]="vehicle._id">
+                                {{ vehicle.type + ' - ' + vehicle.regnumber }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="tripFrom.get('vehicle_id').invalid">
+                            {{ "validations.required" | translate }}
+                        </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div fxFlex="25" fxFlex.lt-sm="100">
+                    <mat-form-field>
+                        <mat-label>Total Amount</mat-label>
+                        <input matInput placeholder="Total Amount" formControlName="total_amount_to_collect"
+                         required min="0" type="number">
+                    </mat-form-field>
+                  </div>
+              </div>
+              <button mat-raised-button color="primary" type="submit" style="margin-right: 5px" class="m-t-8">
+                Save
+              </button>
+              <button mat-raised-button type="button" [routerLink]="['/trips']" class="m-t-8">
+                Back
+              </button>
+            </form>
+        </mat-card>
+
+        <mat-accordion>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <strong>Filter</strong>
+                </mat-panel-title>
+                <mat-panel-description>
+                    Fitler Order List
+                </mat-panel-description>
+                </mat-expansion-panel-header>
+                <form class="form-field-full">
+                <div fxLayout="row wrap" fxLayoutGap="8px grid">
+        
+                    <mat-form-field fxFlex="25"  fxFlex.lt-sm="100" class="matero-col">
+                        <mat-label>Order Type</mat-label>
+                        <mat-select placeholder="Status" [(ngModel)]="searchByOrderType" name="searchByOrderType" >
+                            <mat-option value="CUSTOMER_ORDER">Customer Order</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex="25"  fxFlex.lt-sm="100" class="matero-col">
+                        <mat-label>Slot</mat-label>
+                        <mat-select [(ngModel)]="searchBySlotId" placeholder="Slot" name="slot" >
+                            <mat-option *ngFor="let slot of slotList" [value]="slot._id">
+                                {{ slot.start_time + ' - ' + slot.end_time }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field fxFlex="25" fxFlex.lt-sm="100">
+                        <mat-label>Slot Date</mat-label>
+                        <input matInput [matDatepicker]="dp3" disabled [min]="minDate" name="slotdate" [(ngModel)]="seachBySlotDate" >
+                        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                        <mat-datepicker #dp3 disabled="false" ></mat-datepicker>                            
+                    </mat-form-field>
+        
+                    <div fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+                    <button mat-raised-button color="primary" style="margin-right: 5px" (click)="filterOrder()">
+                        Search
+                    </button>
+                    <button mat-raised-button (click)="resetFilter()">Reset</button>
+                    </div>
+                </div>
+                </form>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <mat-card>
+            <div cdkDropListGroup *ngIf="showDragDrop">
+              <div class="example-container" >
+                <h2>Orders</h2>
+              
+                <div
+                  cdkDropList
+                  #todoList="cdkDropList"
+                  [cdkDropListData]="orders"
+                  
+                  class="example-list"
+                  (cdkDropListDropped)="drop($event)">
+                  <mat-card class="example-card"  *ngFor="let item of orders" cdkDrag style="width: 100%;">
+                    <mat-card-header>
+                      <mat-card-title>Order No. {{item.order_no}}</mat-card-title>
+                      <mat-card-subtitle><mat-icon color="primary">account_box</mat-icon> {{item.destination_id ? item.destination_id.first_name : ''}} <mat-icon color="primary">smartphone</mat-icon> {{item.address_id ? item.address_id.mobile_number : ''}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                            
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                              <mat-label><strong> Status :</strong>{{item.status ? item.status : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Total Amount :</strong>{{item.sub_total_amount ? item.sub_total_amount : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Slot :</strong>{{item.slot_date ? item.slot_date  : '' | date}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Slot :</strong>{{item.slot_id ? item.slot_id.start_time +' - '+item.slot_id.end_time   : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Address :</strong>{{getAddressString(item.address_id)}}</mat-label>
+                            </div>
+                            
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-raised-button color="primary" (click)="moveToTrip(item)">Move</button>
+                    </mat-card-actions>
+                  </mat-card>
+                 
+                </div>
+              </div>
+              
+              <div class="example-container">
+                <h2>Trip</h2>
+              
+                <div
+                  cdkDropList
+                  #doneList="cdkDropList"
+                  [cdkDropListData]="tripOrders"
+                  
+                  class="example-list"
+                  (cdkDropListDropped)="drop($event)">
+                  <mat-card class="example-card" *ngFor="let item of tripOrders" cdkDrag style="width: 100%;">
+                    <mat-card-header>
+                      <mat-card-title>Order No. {{item.order_no}}</mat-card-title>
+                      <mat-card-subtitle><mat-icon color="primary">account_box</mat-icon> {{item.destination_id ? item.destination_id.first_name : ''}} <mat-icon color="primary">smartphone</mat-icon> {{item.address_id ? item.address_id.mobile_number : ''}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                            
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Status :</strong>{{item.status ? item.status : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Total Amount :</strong>{{item.sub_total_amount ? item.sub_total_amount : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Slot :</strong>{{item.slot_date ? item.slot_date  : '' | date}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Slot :</strong>{{item.slot_id ? item.slot_id.start_time +' - '+item.slot_id.end_time   : ''}}</mat-label>
+                            </div>
+
+                            <div fxFlex="50" fxFlex.lt-sm="100">
+                                <mat-label><strong> Address :</strong>{{getAddressString(item.address_id)}}</mat-label>
+                            </div>
+                            
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <button mat-raised-button color="primary" (click)="moveToOrders(item)">Move Back</button>
+                    </mat-card-actions>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+        </mat-card>
+    </div>
+  </div>

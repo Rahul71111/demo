@@ -1,0 +1,140 @@
+{
+  "menu": [
+    {
+      "route": "dashboard",
+      "name": "dashboard",
+      "type": "link",
+      "icon": "dashboard",
+      "badge": {
+        "color": "red-500",
+        "value": "5"
+      }
+    },
+    {
+      "route": "users",
+      "name": "users",
+      "type": "link",
+      "icon":"person"
+    },
+    {
+      "route": "categories",
+      "name": "categories",
+      "type": "link",
+      "icon":"category"
+    },
+    {
+      "route": "banners",
+      "name": "banners",
+      "type": "link",
+      "icon":"view_carousel"
+    },
+    {
+      "route": "unites",
+      "name": "unit",
+      "type": "link",
+      "icon":"straighten"
+    },
+    {
+      "route": "items",
+      "name": "items",
+      "type": "link",
+      "icon":"add_shopping_cart"
+    },
+    {
+      "route": "offers",
+      "name": "offers",
+      "type": "link",
+      "icon":"local_offer"
+    },
+    {
+      "route": "slots",
+      "name": "slot",
+      "type": "link",
+      "icon":"date_range"
+    },
+    {
+      "route": "processing-units",
+      "name": "processing",
+      "type": "link",
+      "icon": "memory"
+    },
+    {
+      "route": "request",
+      "name": "request",
+      "type": "link",
+      "icon":"vertical_align_bottom"
+    },
+    {
+      "route": "orders",
+      "name": "orders",
+      "type": "sub",
+      "icon":"border_all",
+      "children": [
+        {
+          "route": "PURCHASE_ORDER",
+          "name": "purchaseorder",
+          "type": "link"
+        },
+        {
+          "route": "TRANSFER_ORDER",
+          "name": "transferorder",
+          "type": "link"
+        },
+        {
+          "route": "CUSTOMER_ORDER",
+          "name": "customerorder",
+          "type": "link"
+        },
+        {
+          "route": "HAWKER_CUSTOMER_ORDER",
+          "name": "hawkercustomerorder",
+          "type": "link"
+        }
+        ]
+    },
+    {
+      "route": "trips",
+      "name": "trips",
+      "type": "link",
+      "icon":"local_shipping"
+    },
+    {
+      "route": "franchise/pos",
+      "name": "pos",
+      "type": "link",
+      "icon":"tv"
+    },
+    {
+      "route": "address",
+      "name": "address",
+      "type": "sub",
+      "icon": "map",
+      "children": [
+        {
+          "route": "areas",
+          "name": "areas",
+          "type": "link",
+          "icon":"home"
+        },
+        {
+          "route": "cities",
+          "name": "cities",
+          "type": "link",
+          "icon":"apartment"
+        },
+        {
+          "route": "states",
+          "name": "states",
+          "type": "link",
+          "icon":"location_city"
+        },
+        {
+          "route": "countries",
+          "name": "countries",
+          "type": "link",
+          "icon":"flag"
+        }
+      ]
+    }
+  ]
+}

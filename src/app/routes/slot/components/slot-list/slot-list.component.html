@@ -1,0 +1,116 @@
+<page-header></page-header>
+
+<section>
+  <a
+    mat-raised-button
+    aria-label="View basic sidenav example"
+    color="primary"
+    routerLink="new"
+  >
+    Add New
+  </a>
+</section>
+<br />
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Filter</mat-card-title>
+
+      <form>
+        <div fxFlex="50" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>Days</mat-label>
+            <mat-select placeholder="Days" required>
+              <mat-option *ngFor="let day of days">{{ day }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        &nbsp;&nbsp;
+        <div fxFlex="50" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>Depo</mat-label>
+            <mat-select placeholder="Depo" required>
+              <mat-option *ngFor="let depo of depoList">{{
+                depo.name
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+          <button mat-raised-button color="primary" style="margin-right: 5px">
+            Search
+          </button>
+          <button mat-raised-button>Reset</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  <!-- Position Column -->
+  <ng-container matColumnDef="startTime">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Start Time</th>
+    <td mat-cell *matCellDef="let element">{{ element.startTime }}</td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="endTime">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>End Time</th>
+    <td mat-cell *matCellDef="let element">{{ element.endTime }}</td>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="day">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Day</th>
+    <td mat-cell *matCellDef="let element">{{ element.day }}</td>
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="depo">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Depo</th>
+    <td mat-cell *matCellDef="let element">{{ element.depo }}</td>
+  </ng-container>
+
+  <!-- Symbol Column -->
+  <ng-container matColumnDef="active">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-slide-toggle
+        [(ngModel)]="element.active"
+        color="primary"
+      ></mat-slide-toggle>
+    </td>
+  </ng-container>
+
+  <!-- control column -->
+  <ng-container matColumnDef="controls">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+    <td mat-cell *matCellDef="let element">
+      <mat-grid-list cols="2" rowHeight="50px">
+        <mat-grid-tile>
+          <button
+            mat-icon-button
+            aria-label="Edit"
+            (click)="create(element.id)"
+            [routerLink]="[]"
+          >
+            <mat-icon color="primary">create</mat-icon>
+          </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <button
+            mat-icon-button
+            aria-label="Delete"
+            (click)="delete(element.id)"
+          >
+            <mat-icon color="accent">delete</mat-icon>
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

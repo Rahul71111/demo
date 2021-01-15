@@ -1,0 +1,162 @@
+<page-header></page-header>
+
+<section>
+  <a mat-raised-button aria-label="View basic sidenav example" color="primary" routerLink="new" >
+    Add New
+  </a>
+</section>
+<br />
+
+<!-- Filter -->
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Filter</mat-card-title>
+
+      <form class="form-field-full">
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+        
+
+          <mat-form-field fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Offer Type</mat-label>
+            <mat-select placeholder="Type" [(ngModel)]="searchOfferType" name="searchOfferType" >
+              <mat-option *ngFor="let oType of offerTypeList" [value]="oType.value">
+                {{ oType.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <button mat-raised-button color="primary" style="margin-right: 5px" (click)="filterOffer()">
+              Search
+            </button>
+            <button mat-raised-button (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Table  -->
+<!-- server side pagination  -->
+<!-- <mat-form-field>
+    <mat-label>Search</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Abc" #input>
+</mat-form-field>
+   -->
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- position Column -->
+    <ng-container matColumnDef="position">
+      <form>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
+        <td mat-cell *matCellDef="let row">
+          <input min="0" type="number"  [ngModelOptions]="{ standalone: true }" (change)="changePosition(row)" style="max-width: 50px"
+            [(ngModel)]="row.position" />
+        </td>
+      </form>
+    </ng-container>
+
+    <!-- offer_type -->
+    <ng-container matColumnDef="offer_type">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Offer Type</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">
+        {{ row.offer_type }}
+      </td>
+    </ng-container>
+
+    <!-- min_value -->
+    <ng-container matColumnDef="min_value">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Min Value</th>
+      <td mat-cell *matCellDef="let row">{{ row.min_value }}</td>
+    </ng-container>
+
+    <!-- discount_type -->
+    <ng-container matColumnDef="discount_type">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount Type</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.discount_type }}
+      </td>
+    </ng-container>
+    
+    <!-- discount_value -->
+    <ng-container matColumnDef="discount_value">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount Value</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.discount_value }}
+      </td>
+    </ng-container>
+    
+    <!-- coupon_code -->
+    <ng-container matColumnDef="coupon_code">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Coupon Code</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.coupon_code }}
+      </td>
+    </ng-container>
+
+    <!-- active Column -->
+    <ng-container matColumnDef="is_active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+      <td mat-cell *matCellDef="let row">
+        <!-- {{row.is_active ? 'Yes' : 'No'}} -->
+        <mat-slide-toggle
+          [(ngModel)]="row.is_active"
+          (change)="changeActivationStatus(row)"
+          color="primary"
+        ></mat-slide-toggle>
+      </td>
+    </ng-container>
+
+    <!-- expiry -->
+    <ng-container matColumnDef="expiry">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Expiry Date </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.expiry | date}}
+        </td>
+    </ng-container>
+
+    <!-- created_at Column -->
+    <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Created On </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.created_at | date}}
+        </td>
+    </ng-container>
+
+    <!-- control column -->
+    <ng-container matColumnDef="controls">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-grid-list cols="3" rowHeight="50px">
+          <mat-grid-tile>
+            <button mat-icon-button aria-label="Edit"  (click)="navigateToEdit(row._id)" [routerLink]="[]" >
+              <mat-icon color="primary">create</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <button mat-icon-button aria-label="Delete" (click)="deleteIcon(row._id)" >
+              <mat-icon color="accent">delete</mat-icon>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <!-- <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr> -->
+  </table>
+
+  <mat-paginator
+    (page)="pageEvent($event)"
+    [length]="pageDetails.totalRecords"
+    [pageSize]="pageDetails.itemsPerPage"
+    [pageSizeOptions]="[5, 10, 25]"
+  ></mat-paginator>
+</div>

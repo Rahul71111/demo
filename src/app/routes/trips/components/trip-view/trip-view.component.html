@@ -1,0 +1,70 @@
+<div fxLayout="row wrap" class="matero-row">
+    <mat-card>
+      <mat-card-title>Trip View</mat-card-title>
+      <div fxLayout="row wrap" fxLayoutGap="8px grid">
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Type </strong>: {{viewData.role_type.replace('_',' ') | titlecase}}</mat-label>
+        </div>
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Status </strong>: {{viewData.status | titlecase}}</mat-label>
+        </div>
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Assign Time </strong>: {{viewData.assign_time | date}}</mat-label>
+        </div>
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Start Time </strong>: {{viewData.start_time | date}}</mat-label>
+        </div> 
+        
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> End Time </strong>: {{viewData.end_time | date}}</mat-label>
+        </div>
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Total Cash Collected </strong>: {{viewData.total_cash_collected}}</mat-label>
+        </div>
+        
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Total Amount </strong>: {{viewData.total_amount_to_collect}}</mat-label>
+        </div>
+
+        <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-label><strong> Total Distance Travelled </strong>: {{viewData.total_distance_travelled}}</mat-label>
+        </div>
+
+
+        <div fxFlex="100" fxFlex.lt-sm="100">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                
+              <ng-container matColumnDef="order_id">
+                <th mat-header-cell *matHeaderCellDef> Order </th>
+                <td mat-cell *matCellDef="let element"> {{element.order_id}} </td>
+              </ng-container>
+            
+              <ng-container matColumnDef="order_status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let element"> {{element.order_status}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="payment_mode">
+                <th mat-header-cell *matHeaderCellDef> Payment Mode </th>
+                <td mat-cell *matCellDef="let element"> {{element.payment_mode}} </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="payment_status">
+                <th mat-header-cell *matHeaderCellDef> Payment Status </th>
+                <td mat-cell *matCellDef="let element"> {{element.payment_status}} </td>
+              </ng-container>              
+    
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>        
+        </div>
+
+      </div>
+      <!-- <p>{{viewData | json}}</p> -->
+    </mat-card>
+</div>

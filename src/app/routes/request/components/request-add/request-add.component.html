@@ -1,0 +1,326 @@
+<page-header title="{{ isEditMode ? 'Edit Item' : 'New Item' }}" [nav]="['home', 'request', 'new']"></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+    <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+        <mat-card>
+            <mat-card-title>{{ isEditMode ? "Edit Request" : "New Request" }}
+            </mat-card-title>
+
+            <form [formGroup]="requestForm" (submit)="onFormSubmit($event)" class="form-field-full">
+                <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                    <!-- request order type -->
+                    <div fxFlex="30" fxFlex.lt-sm="100">
+                        <mat-form-field>
+                            <mat-label>Order Type</mat-label>
+                            <mat-select placeholder="Order Type" (selectionChange)="orderTypeChanged()" required formControlName="requestOrderType">
+                                <mat-option *ngFor="let type of requestType" [value]="type.value">{{ type.lable }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('requestOrderType').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- send recieve -->
+                    <div fxFlex="70" fxFlex.lt-sm="100" *ngIf="!isAdmin">
+                        <mat-radio-group aria-label="Select request type" formControlName="selectRequestType">
+                            <mat-radio-button (change)="sendRecieveChange($event)" value="send">Send</mat-radio-button>
+                            &nbsp; &nbsp;
+                            <mat-radio-button (change)="sendRecieveChange($event)"  value="recieve">Recieve</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+
+                    <!-- source role -->
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="isAdmin || requestForm.get('selectRequestType').value === 'recieve'">
+                        <mat-form-field>
+                            <mat-label>Source Role</mat-label>
+                            <mat-select placeholder="Source Role"
+                                (selectionChange)="filterRoleChanged('searchBySorceRoleName')"
+                                formControlName="searchBySorceRoleName">
+                                <mat-option *ngFor="let sourceRole of filterRoleList" [value]="sourceRole._id">
+                                    {{ sourceRole.name }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('searchBySorceRoleName').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- source user -->
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="isAdmin || requestForm.get('selectRequestType').value === 'recieve'">
+                        <mat-form-field>
+                            <mat-label>Source User</mat-label>
+                            <mat-select placeholder="User" (selectionChange)="sourceUserChange()" formControlName="sourceUserId">
+                                <mat-option *ngFor="let sourceUser of sourceUserList" [value]="sourceUser._id">
+                                    {{ sourceUser.first_name }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('sourceUserId').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    
+                    <!-- destination role -->
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="isAdmin || requestForm.get('selectRequestType').value === 'send'">
+                        <mat-form-field>
+                            <mat-label>Destination Role</mat-label>
+                            <mat-select placeholder="User Role"
+                                (selectionChange)="filterRoleChanged('destinationRoleName')"
+                                formControlName="destinationRoleName">
+                                <mat-option *ngFor="let destionRole of destinationRoleList" [value]="destionRole._id">
+                                    {{ destionRole.name | titlecase}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('destinationRoleName').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- destination user -->
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="isAdmin || requestForm.get('selectRequestType').value === 'send'">
+                        <mat-form-field>
+                            <mat-label>Destination User</mat-label>
+                            <mat-select placeholder="User" (selectionChange)="destinationUserChange()" formControlName="destinationUserId">
+                                <mat-option *ngFor="let destinationUser of destinationUserList"
+                                    [value]="destinationUser._id">{{ destinationUser.first_name | titlecase}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('destinationUserId').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- supplier -->
+                    <div fxFlex="50" fxFlex.lt-sm="100"
+                        *ngIf="requestForm.get('requestOrderType').value == 'PURCHASE_ORDER'">
+                        <mat-form-field>
+                            <mat-label>Supplier User</mat-label>
+                            <mat-select placeholder="User" formControlName="supplierUserId">
+                                <mat-option *ngFor="let sourceUser of supplierList" [value]="sourceUser._id">
+                                    {{ sourceUser.first_name | titlecase}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="requestForm.get('supplierUserId').invalid">
+                                {{ "validations.required" | translate }}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <!-- <div fxFlex="{{requestForm.get('requestOrderType').value === 'PURCHASE_ORDER'?50:100}}"
+                        fxFlex.lt-sm="100">
+                    </div> -->
+                </div>
+                <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="itemList && itemList.data && itemList.data.length > 0" style="padding-right: 20px;">
+                        <mat-card-title>Items</mat-card-title>
+                        <div class="">
+                            <mat-form-field>
+                                <mat-label>Search</mat-label>
+                                <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Abc" #input>
+                            </mat-form-field>
+                            <table mat-table [dataSource]="dataSource" matSort style="width: 100%;">
+                                <!-- position Column -->
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+                                    <td mat-cell *matCellDef="let row; let i = index">
+                                        <mat-grid-list cols="3" rowHeight="50px">
+                                            <mat-grid-tile *ngIf="!isPurchaseOrder || row.showAdd">
+                                                <button mat-icon-button aria-label="Add" type="button" (click)="addCartItem(row,i)">
+                                                    <mat-icon color="accent">add_circle_outline</mat-icon>
+                                                </button>
+                                            </mat-grid-tile>
+                                        </mat-grid-list>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Name Column -->
+                                <ng-container matColumnDef="itemName">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Item Name</th>
+                                    <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                                        {{ row.name | titlecase}}
+                                    </td>
+                                </ng-container>
+                                <!-- category -->
+                                <ng-container matColumnDef="price">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <!-- {{(row.price ? row.price : row.user_price) | currency:'INR'}} -->
+                                        {{row.price | currency:'INR'}}
+                                        <!-- <input type="number" [ngModelOptions]="{ standalone: true }"
+                                            (change)="changePosition(row)" style="max-width: 50px"
+                                            [(ngModel)]="row.price" /> -->
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="final_purchase_price" style="max-width: 50px;">
+                                    <th mat-header-cell *matHeaderCellDef style="max-width: 50px;" mat-sort-header>Final Purchase Price</th>
+                                    <td mat-cell *matCellDef="let row">
+                                        <!-- {{(row.price ? row.price : row.user_price) | currency:'INR'}} -->
+                                        <input type="number" [ngModelOptions]="{ standalone: true }"
+                                             style="max-width: 50px"
+                                            [(ngModel)]="row.final_purchase_price" />
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="unit">
+                                    <th mat-header-cell *matHeaderCellDef>Unit</th>
+                                    <!-- <form> -->
+                                        <td mat-cell *matCellDef="let row; let i = index;">
+                                            <!-- (selectionChange)="updateUnit(row,i,$event)" -->
+                                            <mat-select style="max-width: 80px;" *ngIf="isPurchaseOrder" (selectionChange)="row.showAdd = true;" placeholder="Unit"
+                                                [ngModelOptions]="{ standalone: true }" [(ngModel)]="row.unit_id" name="unit"> 
+                                                <mat-option *ngFor="let unit of unitList" [value]="unit">{{unit.name}}</mat-option>
+                                            </mat-select>
+                                            <span *ngIf="!row.all_item_units && !isPurchaseOrder">
+                                                {{row.unit_id.name | titlecase}}
+                                            </span>
+                                            <span *ngIf="row.all_item_units && !isPurchaseOrder">
+                                                {{row.unit_id.name | titlecase}}
+                                            </span>
+                                        </td>
+                                    <!-- </form> -->
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                            </table>
+
+                            <!-- <mat-paginator (page)="pageEvent($event)" [length]="pageDetails.totalRecords"
+                                [pageSize]="pageDetails.itemsPerPage" [pageSizeOptions]="[5, 10, 25]"></mat-paginator> -->
+                        </div>
+                    </div>
+
+                    <div fxFlex="50" fxFlex.lt-sm="100" *ngIf="cartItemList.length > 0">
+                        <mat-card-title> Cart Details </mat-card-title>
+                        <div class="">
+                            <mat-form-field>
+                                <mat-label>Search</mat-label>
+                                <input matInput (keyup)="applyFilterCart($event)" placeholder="Ex. Abc" #input>
+                            </mat-form-field>
+                            <table mat-table [dataSource]="dataSourceCart" matSort style="width: 100%;">
+                                <ng-container matColumnDef="action">
+                                    <td mat-cell *matCellDef="let row; let i = index">
+                                        <button mat-icon-button aria-label="Add" (click)="deleteICartItem(row,i)" type="button">
+                                            <mat-icon color="accent">delete_outline</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
+
+                                <!-- Name Column -->
+                                <ng-container matColumnDef="itemName">
+                                    <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                                        {{ row.name | titlecase}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="price">
+                                    <td mat-cell *matCellDef="let row">
+                                        {{(row.price * (row.quantity == 0 ? 1 :row.quantity )) | currency:'INR'}}
+                                        <!-- <input type="number"
+                                            [ngModelOptions]="{ standalone: true }" (change)="changePosition(row)"
+                                            style="max-width: 50px" [(ngModel)]="row.price" /> -->
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="quantity">
+                                    <!-- <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th> -->
+                                    <td mat-cell *matCellDef="let row; let i = index;" class="quanmob" style="width: 26%;">
+                                        <button type="button" mat-icon-button aria-label="Add" (click)="addQuantity(i)">
+                                            <mat-icon color="accent">add_circle_outline</mat-icon>
+                                        </button><input type="text" [ngModelOptions]="{ standalone: true }"
+                                            (change)="changeQuantity(row,i)" style="max-width: 50px"
+                                            [(ngModel)]="row.quantity" /> 
+                                            <button type="button" mat-icon-button aria-label="Add"
+                                            (click)="removeQuantity(i)">
+                                            <mat-icon color="accent">remove_circle_outline</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="unit">
+                                    <!-- <th mat-header-cell *matHeaderCellDef>Unit</th> -->
+                                    <!-- <form> -->
+                                        <td mat-cell *matCellDef="let row; let i = index;">
+                                            <!-- <mat-select style="max-width: 80px;" *ngIf="row.all_item_units" placeholder="Unit"
+                                                (selectionChange)="updateUnit(row,i,$event)"
+                                                [ngModelOptions]="{ standalone: true }" [(ngModel)]="row.unit"
+                                                name="unit">  -->
+                                                <!-- *ngIf="requestForm.get('requestOrderType').value === 'PURCHASE_ORDER'" -->
+                                                <!-- <mat-option *ngFor="let unit of row.all_item_units" [value]="unit.unit_id._id">{{unit.unit_id.name}}</mat-option>
+                                            </mat-select> -->
+                                            <span>
+                                                {{row.unit_id.name | titlecase}}
+                                            </span>
+                                        </td>
+                                    <!-- </form> -->
+                                </ng-container>
+                                <ng-container matColumnDef="title">
+                                    <td mat-footer-cell *matFooterCellDef="let row">
+                                        <b> Total : </b>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="blankCell">
+                                    <td mat-footer-cell *matFooterCellDef>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="total">
+                                    <td mat-footer-cell *matFooterCellDef>
+                                        <b>{{ getTotal() | currency: 'INR' }} </b>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="discounttitle">
+                                    <td mat-footer-cell *matFooterCellDef>
+                                        <b *ngIf="isFranchiseOrder">Discount:</b>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="discount">
+                                    <td mat-footer-cell *matFooterCellDef >
+                                        <b *ngIf="isFranchiseOrder">{{ discount | currency: 'INR' }} </b>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="finalprice">
+                                    <td mat-footer-cell *matFooterCellDef >
+                                        <b *ngIf="isFranchiseOrder">Discounted Price:</b>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="discounted_price">
+                                    <td mat-footer-cell *matFooterCellDef>
+                                        <b *ngIf="isFranchiseOrder">{{ discountedPrice | currency: 'INR' }} </b>
+                                    </td>
+                                </ng-container>
+                                <!-- <tr mat-header-row *matHeaderRowDef="cartDisplayedColumns"></tr> -->
+                                <tr mat-row *matRowDef="let row; columns: cartDisplayedColumns"></tr>
+                                <tr mat-footer-row
+                                    *matFooterRowDef="['title', 'blankCell', 'blankCell', 'total']; sticky: true"> </tr>
+                                <tr mat-footer-row
+                                    *matFooterRowDef="['discounttitle', 'blankCell', 'blankCell', 'discount'];"> </tr>
+                                <tr mat-footer-row 
+                                    *matFooterRowDef="['finalprice', 'blankCell', 'blankCell', 'discounted_price'];"> </tr>
+                            </table>
+
+                            <!-- <mat-paginator (page)="pageEvent($event)" [length]="pageDetails.totalRecords"
+                                [pageSize]="pageDetails.itemsPerPage" [pageSizeOptions]="[5, 10, 25]"></mat-paginator> -->
+                        </div>
+                    </div>
+                </div>
+
+                <button mat-raised-button color="primary" type="submit" style="margin-right: 5px" class="m-t-8">
+                    Save
+                </button>
+                <button mat-raised-button type="button" [routerLink]="['/request']" class="m-t-8">
+                    Back
+                </button>
+            </form>
+        </mat-card>
+    </div>
+</div>

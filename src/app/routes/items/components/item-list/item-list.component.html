@@ -1,0 +1,335 @@
+<page-header title="Items" [nav]="navPath"></page-header>
+
+<section>
+  <!-- *ngIf="!isManufaturingPlant" -->
+  <a mat-raised-button aria-label="View basic sidenav example" color="primary" 
+    *ngIf="isAdmin" routerLink="new">
+    Add New
+  </a>
+</section>
+<br />
+
+<!-- Filter -->
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Filter</mat-card-title>
+
+      <form class="form-field-full">
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+          <mat-form-field fxFlex="33" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Name" [(ngModel)]="searchByName" name="searchByName">
+          </mat-form-field>
+
+          <mat-form-field
+            fxFlex="33"
+            fxFlex.lt-sm="100"
+            *ngIf="isAdmin"
+            class="matero-col">
+            <mat-label>User Role</mat-label>
+            <mat-select
+              placeholder="User Role"
+              (selectionChange)="filterRoleChanged()"
+              [(ngModel)]="searchRoleName"
+              name="searchRoleName">
+              <mat-option
+                *ngFor="let role of filterRoleList"
+                [value]="role.type">
+                {{ role.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field
+            fxFlex="33"
+            fxFlex.lt-sm="100"
+            *ngIf="isAdmin"
+            class="matero-col"
+          >
+            <mat-label>User</mat-label>
+            <mat-select
+              placeholder="User"
+              [(ngModel)]="searchUserId"
+              name="searchUserId"
+            >
+              <mat-option
+                *ngFor="let user of filterUserList"
+                [value]="user._id"
+                >{{ user.first_name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="33" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Item Type</mat-label>
+            <mat-select
+              placeholder="Item Type"
+              [(ngModel)]="searchItemType"
+              name="filterType">
+              <mat-option
+                *ngFor="let type of itemTypeList"
+                [value]="type.value"
+                >{{ type.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="33" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Category</mat-label>
+            <mat-select
+              placeholder="Category"
+              [(ngModel)]="filterCategoryId"
+              name="filterType"
+            >
+              <mat-option
+                *ngFor="let cate of filterCategoryList"
+                [value]="cate._id"
+                >{{ cate.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="34" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Availability</mat-label>
+            <mat-select
+              placeholder="Type"
+              [(ngModel)]="availabilityStatus"
+              name="filterCategoryId"
+            >
+              <mat-option
+                *ngFor="let availability of availabilityList"
+                [value]="availability.value"
+                >{{ availability.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+            <button
+              mat-raised-button
+              color="primary"
+              style="margin-right: 5px"
+              (click)="filterItem()"
+            >
+              Search
+            </button>
+            <button mat-raised-button (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Table  -->
+<!-- server side pagination  -->
+<!-- <mat-form-field>
+    <mat-label>Search</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Abc" #input>
+</mat-form-field>
+   -->
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- position Column -->
+    <ng-container matColumnDef="position">
+      <form>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
+        <td mat-cell *matCellDef="let row">
+          {{row.position}}
+        </td>
+      </form>
+    </ng-container>
+    <ng-container matColumnDef="position_edit">
+      <form>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
+        <td mat-cell *matCellDef="let row">
+          <!-- {{row.position}} -->
+          <input
+            type="number"
+            [ngModelOptions]="{ standalone: true }"
+            (change)="changePrice(row)"
+            style="max-width: 50px"
+            [(ngModel)]="row.position"
+            min="1"
+          />
+        </td>
+      </form>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">
+        {{ row.name }}
+      </td>
+    </ng-container>
+
+    <!-- secondary_name -->
+    <ng-container matColumnDef="secondary_name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Second Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.secondary_name }}</td>
+    </ng-container>
+
+    <!-- category -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.category_id ? row.category_id.name : "" }}
+      </td>
+    </ng-container>
+
+    <!-- thumbnail Column -->
+    <ng-container matColumnDef="thumbnail">
+      <th mat-header-cell *matHeaderCellDef>Image</th>
+      <td mat-cell *matCellDef="let row">
+        <img
+          src="{{ row.thumbnail }}"
+          alt="Item Image"
+          width="100px"
+          height="50px"
+          class="itemimg"
+        />
+      </td>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+      <td mat-cell *matCellDef="let row">
+        {{ itemTypes[row.type] }}
+      </td>
+    </ng-container>
+
+    <!-- price Column -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.price }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="price_user">
+      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.user_price }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="price_edit">
+      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let row">
+        <input
+          type="number"
+          [ngModelOptions]="{ standalone: true }"
+          (change)="changePrice(row)"
+          style="max-width: 70px"
+          [(ngModel)]="row.user_price"
+          min="1"
+        />
+      </td>
+    </ng-container>
+
+    <!-- item_volume Column -->
+    <ng-container matColumnDef="item_volume">
+      <th mat-header-cell *matHeaderCellDef>Quantity</th>
+      <td mat-cell *matCellDef="let row">{{ row.item_quantity }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="unit_id">
+      <th mat-header-cell *matHeaderCellDef>Unit</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.unit_id ? row.unit_id.name : "" }}
+        <a [routerLink]="[]" (click)="viewItemUnit(row)">
+          ({{ row.all_item_units && row.all_item_units.length > 0 ? row.all_item_units.length : ""}})
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="availability_status_edit">
+      <th mat-header-cell *matHeaderCellDef>Availability Status</th>
+      <form>
+        <td mat-cell *matCellDef="let row">
+          <mat-select style="max-width: 80px;" placeholder="Type" (selectionChange)="updateItemDepoPrice(row)"
+            [ngModelOptions]="{ standalone: true }" [(ngModel)]="row.availability_status" name="availability_status">
+            <mat-option *ngFor="let aStatus of availabilityList" [value]="aStatus.value" >
+              {{ aStatus.name }}
+            </mat-option>
+          </mat-select>
+        </td>
+      </form>
+    </ng-container>
+
+    <ng-container matColumnDef="availability_status">
+      <th mat-header-cell *matHeaderCellDef>Availability Status</th>
+      <td mat-cell *matCellDef="let row">{{ row.availability_status == 'TRUE' ? 'Available' : 'Notify' }}</td>
+    </ng-container>
+
+    <!-- active Column -->
+    <ng-container matColumnDef="is_active_edit">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+      <td mat-cell *matCellDef="let row">
+        <!-- {{row.is_active ? 'Yes' : 'No'}} -->
+        <mat-slide-toggle
+          [(ngModel)]="row.is_active"
+          (change)="changeActivationStatus(row)"
+          color="primary"
+        ></mat-slide-toggle>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="is_active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+      <td mat-cell *matCellDef="let row">
+        {{row.is_active ? 'Yes' : 'No'}}
+      </td>
+    </ng-container>
+
+    <!-- created_at Column -->
+    <!-- <ng-container matColumnDef="created_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Created On </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.created_at | date}}
+        </td>
+      </ng-container> -->
+
+    <!-- control column -->
+    <ng-container matColumnDef="controls">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-grid-list cols="3" rowHeight="50px">
+          <mat-grid-tile *ngIf="!isUserView">
+            <button mat-icon-button  aria-label="View" (click)="openItemViewDialog(row)" >
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="isAdmin">
+            <button mat-icon-button aria-label="Edit" (click)="navigateToEdit(row._id)" [routerLink]="[]">
+              <mat-icon color="primary">create</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="isAdmin">
+            <button mat-icon-button aria-label="Delete" (click)="deleteIcon(row._id)" >
+              <mat-icon color="accent">delete</mat-icon>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <!-- <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr> -->
+  </table>
+
+  <mat-paginator
+    (page)="pageEvent($event)"
+    [length]="pageDetails.totalRecords"
+    [pageSize]="pageDetails.itemsPerPage"
+    [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+  
+</div>

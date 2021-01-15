@@ -1,0 +1,73 @@
+<!-- <h2 mat-dialog-title>View Item</h2> -->
+<!-- <mat-dialog-content class="mat-typography"> -->
+<div fxLayout="row wrap" class="matero-row">
+  <mat-card>
+    <mat-card-title>Item View</mat-card-title>
+    <!-- <p>{{ viewData | json}}</p> -->
+
+    <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              
+      <div fxFlex="15" fxFlex.lt-sm="100">
+        <mat-label><strong> Thumbnail </strong>:</mat-label>
+      </div>
+      <div fxFlex="85" fxFlex.lt-sm="100">
+        <img src="{{viewData.thumbnail}}" alt="Item Thumbnail" height="60px" width="80px" />
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Name </strong>: {{viewData.name}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong>Category </strong>: {{viewData.category_id ? viewData.category_id.name : ''}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Type </strong>: {{itemTypes[viewData.type]}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Position </strong>: {{viewData.position}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> is Active </strong>: {{viewData.is_active ? 'Yes' : 'No'}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Price </strong>: {{viewData.price}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Secondary Name</strong>: {{viewData.secondary_name? viewData.secondary_name :''}}</mat-label>
+      </div>
+
+      <div fxFlex="50" fxFlex.lt-sm="100">
+        <mat-label><strong> Unit Name</strong>: {{viewData.unit_id? viewData.unit_id.name:''}}</mat-label>
+      </div>
+
+      <div fxFlex="100" fxFlex.lt-sm="100">
+        <mat-label><strong>Description</strong>: {{viewData.description}}</mat-label>
+      </div>
+
+      <div fxFlex="100" fxFlex.lt-sm="100">
+        <mat-label><strong>Benefits</strong>: {{viewData.benefits}}</mat-label>
+      </div>
+
+      <div fxFlex="15" fxFlex.lt-sm="100">
+        <mat-label><strong> Pictures </strong>:</mat-label>
+      </div>
+      <div fxFlex="85" fxFlex.lt-sm="100">
+        <img src="{{pic}}" *ngFor="let pic of viewData.picture" alt="Item Picture" height="60px" width="80px" />
+      </div>
+
+      
+    </div>
+  </mat-card> 
+</div>
+ 
+<!-- </mat-dialog-content> -->
+<!-- <mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Install</button>
+</mat-dialog-actions> -->

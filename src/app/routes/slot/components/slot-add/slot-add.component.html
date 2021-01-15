@@ -1,0 +1,73 @@
+<page-header title="Slot" subtitle="" [nav]="['Home', 'Add']"></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Add New </mat-card-title>
+
+      <!-- <form class="form-field-full"> -->
+      <div fxLayout="row wrap" fxLayoutGap="8px grid">
+        <div fxFlex="20" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>Start Time</mat-label>
+            <input matInput type="time" required />
+          </mat-form-field>
+        </div>
+        <div fxFlex="20" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>End Time</mat-label>
+            <input matInput type="time" required />
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="20" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>Days</mat-label>
+            <mat-select multiple>
+              <mat-option *ngFor="let day of days" [value]="day">{{
+                day
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="20" fxFlex.lt-sm="100">
+          <mat-form-field>
+            <mat-label>Depos</mat-label>
+            <mat-select multiple>
+              <mat-option *ngFor="let depo of depoList" [value]="depo.id">{{
+                depo.name
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex="20" fxFlex.lt-sm="100">
+          <mat-slide-toggle
+            style="margin-top: 20px"
+            color="primary"
+            [(ngModel)]="isChecked">
+            Active
+          </mat-slide-toggle>
+        </div>
+      </div>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        style="margin-right: 5px"
+        class="m-t-8">
+        Save
+      </button>
+      <button
+        mat-raised-button
+        type="button"
+        [routerLink]="['/slots']"
+        class="m-t-8">
+        Back
+      </button>
+      <!-- </form> -->
+    </mat-card>
+  </div>
+</div>

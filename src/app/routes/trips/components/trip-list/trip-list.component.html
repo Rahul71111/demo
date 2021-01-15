@@ -1,0 +1,158 @@
+<page-header></page-header>
+
+<section>
+  <a mat-raised-button aria-label="View basic sidenav example" *ngIf="!isHawker" color="primary" routerLink="new" >
+    Add New
+  </a>
+</section>
+<br />
+
+<!-- Filter -->
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Filter</mat-card-title>
+
+      <form class="form-field-full">
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+        
+
+          <mat-form-field fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Status</mat-label>
+            <mat-select placeholder="Type" [(ngModel)]="searchByStatus" name="searchByStatus" >
+              <mat-option value="ASSIGNED">Assigned</mat-option>
+              <mat-option value="STARTED">Started</mat-option>
+              <mat-option value="ENDED">Ended</mat-option>
+              <mat-option value="CANCELLED">Cancelled</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <button mat-raised-button color="primary" style="margin-right: 5px" (click)="filterTrip()">
+              Search
+            </button>
+            <button mat-raised-button (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Table  -->
+
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="assign_time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 50px;"> Assign Time </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.assign_time | date:'shortTime'}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="start_time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 50px;"> Start Time </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.start_time | date:'shortTime'}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="end_time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 50px;"> End Time </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.end_time | date:'shortTime'}}
+        </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="total_cash_collected">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 70px;"> Total Cash Collected </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.total_cash_collected}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="trip_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Trip Name </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.trip_name}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="total_distance_travelled" >
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 70px;"> Total Distance Travelled </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.total_distance_travelled}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="role_type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Role </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.role_type}}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.status}}
+        </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="total_amount_to_collect">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="max-width: 70px;"> Total Amount Collected </th>
+        <td mat-cell *matCellDef="let row" > 
+            {{row.total_amount_to_collect}}
+        </td>
+    </ng-container>
+
+    <!-- control column -->
+    <ng-container matColumnDef="controls">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-grid-list cols="3" rowHeight="50px">
+          <mat-grid-tile>
+            <button mat-icon-button aria-label="View" matTooltip="View" (click)="openView(row)" >
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="(isAdmin || isDepo) && row.status == 'ASSIGNED'">
+            <button mat-icon-button aria-label="Edit" matTooltip="Edit" (click)="navigateToEdit(row._id)" [routerLink]="[]" >
+              <mat-icon color="primary">create</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="isHawker && row.status == 'ASSIGNED'" >
+            <button mat-icon-button matTooltip="Start Trip" (click)="startTrip(row._id)" >
+              <mat-icon style="color: green;">check_circle</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="(isHawker || isAdmin || isDepo) && row.status == 'STARTED'" >
+            <button mat-icon-button matTooltip="End Trip" (click)="endTrip(row._id)" >
+              <mat-icon color="error">cancel</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="(isHawker || isAdmin || isDepo) && row.status == 'STARTED'" >
+            <button mat-icon-button matTooltip="Cancel" (click)="cancelTrip(row._id)" >
+              <mat-icon color="error">cancel_presentation</mat-icon>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <!-- <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr> -->
+  </table>
+
+  <!-- <mat-paginator
+    (page)="pageEvent($event)"
+    [length]="pageDetails.totalRecords"
+    [pageSize]="pageDetails.itemsPerPage"
+    [pageSizeOptions]="[5, 10, 25]"></mat-paginator> -->
+</div>

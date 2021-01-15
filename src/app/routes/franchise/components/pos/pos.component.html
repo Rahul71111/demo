@@ -1,0 +1,28 @@
+<!-- <page-header title="POS" [nav]="['home', 'franchise', 'POS']"></page-header> -->
+
+<div fxLayout="row wrap" class="matero-row">
+    <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+      <mat-card>
+        <!-- <mat-card-title>POS</mat-card-title> -->
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+            <mat-tab-group style="width: 100%;">
+                <mat-tab label="POS 1">
+                    <mat-card>
+                        <pos-cart></pos-cart>
+                    </mat-card>
+                </mat-tab>
+                <mat-tab label="POS 2">
+                    <mat-card>
+                        <pos-cart></pos-cart>
+                    </mat-card>
+                </mat-tab>
+                <mat-tab label="POS 3">
+                    <mat-card>
+                        <pos-cart></pos-cart>
+                    </mat-card>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+      </mat-card>
+    </div>
+</div>

@@ -1,0 +1,289 @@
+<page-header
+  title="{{ isEditMode ? 'Edit Item' : 'New Item' }}"
+  [nav]="['home', 'items', 'new']"
+></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+    <mat-card>
+      <mat-card-title
+        >{{ isEditMode ? "Edit Item" : "New Item" }}
+      </mat-card-title>
+
+      <form
+        [formGroup]="itemForm"
+        (submit)="onFormSubmit($event)"
+        class="form-field-full"
+      >
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Name</mat-label>
+              <input
+                matInput
+                placeholder="Name"
+                formControlName="name"
+                required
+              />
+              <mat-error *ngIf="itemForm.get('name').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Secondary Name</mat-label>
+              <input matInput placeholder="Secondary Name" formControlName="secondary_name" required />
+              <mat-error *ngIf="itemForm.get('secondary_name').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="30" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Price</mat-label>
+              <input
+                matInput
+                placeholder="Price"
+                formControlName="price"
+                required
+                type="text"
+              />
+              <mat-error *ngIf="itemForm.get('price').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="20" fxFlex.lt-sm="100">
+            <mat-slide-toggle
+              formControlName="is_active"
+              style="margin-top: 20px"
+              color="primary"
+            >
+              {{ is_active_value ? "Active" : "Inactive" }}
+            </mat-slide-toggle>
+          </div>
+
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Category</mat-label>
+              <mat-select
+                formControlName="category_id"
+                (selectionChange)="onCategorySelectionChange()"
+                placeholder="Category"
+                required
+              >
+                <mat-option
+                  *ngFor="let cate of categoryList"
+                  [value]="cate._id"
+                  >{{ cate.name }}</mat-option
+                >
+              </mat-select>
+              <mat-error *ngIf="itemForm.get('category_id').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Sub Category</mat-label>
+              <mat-select
+                formControlName="subCategory_ids"
+                (selectionChange)="onSubCategorySelectionChange()"
+                placeholder="Sub Category"
+                required
+                multiple
+              >
+                <mat-option
+                  *ngFor="let cate of subCategoryList"
+                  [value]="cate._id"
+                  >{{ cate.name }}</mat-option
+                >
+              </mat-select>
+              <mat-error *ngIf="itemForm.get('subCategory_ids').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Type</mat-label>
+              <mat-select
+                formControlName="item_type"
+                placeholder="Type"
+                required
+              >
+                <mat-option
+                  *ngFor="let type of itemTypeList"
+                  [value]="type.value"
+                  >{{ type.name }}</mat-option
+                >
+              </mat-select>
+              <mat-error *ngIf="itemForm.get('item_type').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="25" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Unit</mat-label>
+              <mat-select formControlName="unit_id" placeholder="Unit" required>
+                <mat-option *ngFor="let unit of unitList" [value]="unit._id">{{
+                  unit.name
+                }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="itemForm.get('unit_id').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Recommendation</mat-label>
+              <mat-select
+                formControlName="recommended_items"
+                placeholder="Recommendation"
+                multiple
+              >
+                <mat-option
+                  *ngFor="let item of recommendedList"
+                  [value]="item._id"
+                  >{{ item.name }}</mat-option
+                >
+              </mat-select>
+              <!-- <mat-error *ngIf="itemForm.get('recommended_items').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error> -->
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Thumbnail</mat-label>
+              <input
+                matInput
+                placeholder="Thumbnail"
+                formControlName="thumbnail"
+                required
+              />
+              <mat-error *ngIf="itemForm.get('thumbnail').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Tags</mat-label>
+              <mat-chip-list #chipList aria-label="Tags">
+                <mat-chip
+                  *ngFor="let tag of itemForm.get('category_tags').value"
+                  selectable="true"
+                  removable="true"
+                  (removed)="removetag(tag)"
+                >
+                  {{ tag }}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input
+                  placeholder="Tags"
+                  [matChipInputFor]="chipList"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  [matChipInputAddOnBlur]="true"
+                  (matChipInputTokenEnd)="addtag($event)"
+                />
+              </mat-chip-list>
+              <mat-error *ngIf="itemForm.get('category_tags').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Pictures</mat-label>
+              <!-- <input matInput placeholder="Pictures" 
+                       required> -->
+              <mat-chip-list #picList aria-label="Pictures">
+                <mat-chip
+                  *ngFor="let picitem of itemForm.get('picture').value"
+                  selectable="true"
+                  removable="true"
+                  (removed)="removepic(picitem)"
+                >
+                  {{ picitem }}
+                  <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input
+                  placeholder="Pictures"
+                  [matChipInputFor]="picList"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  [matChipInputAddOnBlur]="true"
+                  (matChipInputTokenEnd)="addpic($event)"
+                />
+              </mat-chip-list>
+              <mat-error *ngIf="itemForm.get('picture').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Description</mat-label>
+              <textarea
+                matInput
+                placeholder="Description"
+                formControlName="description"
+                style="resize: none"
+              ></textarea>
+              <mat-error *ngIf="itemForm.get('description').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex="50" fxFlex.lt-sm="100">
+            <mat-form-field>
+              <mat-label>Benefits</mat-label>
+              <textarea
+                matInput
+                placeholder="Benefits"
+                formControlName="benefits"
+                style="resize: none"
+              ></textarea>
+              <mat-error *ngIf="itemForm.get('benefits').invalid">
+                {{ "validations.required" | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          style="margin-right: 5px"
+          class="m-t-8"
+        >
+          Save
+        </button>
+        <button
+          mat-raised-button
+          type="button"
+          [routerLink]="['/items']"
+          class="m-t-8"
+        >
+          Back
+        </button>
+      </form>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,206 @@
+<page-header title="{{searchByOrderType.replace('_', ' ') | titlecase }}" [nav]="['home', 'orders', searchByOrderType.replace('_', ' ').toLowerCase()]"></page-header>
+
+<!-- Filter -->
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>Filter</mat-card-title>
+
+      <form class="form-field-full">
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+
+          <mat-form-field fxFlex="25" *ngIf="!isAdmin" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>IN-OUT</mat-label>
+            <mat-select placeholder="Status" (selectionChange)="searchBySource = '';searchByDestination = '';" [(ngModel)]="searchByInOut" name="inout" >
+              <mat-option value="IN" style="text-transform: capitalize;">IN</mat-option>
+              <mat-option value="OUT" style="text-transform: capitalize;">OUT</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="25" *ngIf="isAdmin || searchByInOut == 'IN'" fxFlex.lt-sm="100">
+            <mat-label>Source Role</mat-label>
+            <mat-select placeholder="Role" (selectionChange)="sourceRoleChanged()" [(ngModel)]="searchBySourceRole" name="role" >
+              <mat-option *ngFor="let role of roleList"  [value]="role.type" >
+                {{ role.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="25" *ngIf="isAdmin || searchByInOut == 'IN'" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Source</mat-label>
+            <mat-select placeholder="Source" [(ngModel)]="searchBySource" name="searchBySource" >
+              <mat-option *ngFor="let user of sourceUserList" [value]="user._id">
+                {{ user.first_name | titlecase}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="25" *ngIf="isAdmin || searchByInOut == 'OUT'" fxFlex.lt-sm="100">
+            <mat-label>Destination Role</mat-label>
+            <mat-select placeholder="Role" (selectionChange)="destinationRoleChanged()" [(ngModel)]="searchByDestinationRole" name="role" >
+              <mat-option *ngFor="let role of roleList"  [value]="role.type" >
+                {{ role.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="25" *ngIf="isAdmin || searchByInOut == 'OUT'" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Destination</mat-label>
+            <mat-select placeholder="Destination" [(ngModel)]="searchByDestination" name="searchByDestination" >
+              <mat-option *ngFor="let user of destinationUserList" [value]="user._id">
+                {{ user.first_name | titlecase}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <mat-label>Order Status</mat-label>
+            <mat-select placeholder="Status" [(ngModel)]="searchByOrderStatus" name="searchByOrderStatus" >
+              <mat-option *ngFor="let status of filterOrderStatus" [value]="status" style="text-transform: capitalize;">
+                {{ status | titlecase}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div fxFlex="25" fxFlex.lt-sm="100" class="matero-col">
+            <button mat-raised-button color="primary" style="margin-right: 5px" (click)="filterOrder()">
+              Search
+            </button>
+            <button mat-raised-button (click)="resetFilter()">Reset</button>
+          </div>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Table  -->
+<!-- server side pagination  -->
+<!-- <mat-form-field>
+    <mat-label>Search</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Abc" #input>
+</mat-form-field>
+   -->
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort style="word-break: break-all;">
+    <!-- position Column -->
+    <!-- <ng-container matColumnDef="position">
+      <form>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position</th>
+        <td mat-cell *matCellDef="let row">
+          <input type="number"  [ngModelOptions]="{ standalone: true }" (change)="changePosition(row)" style="max-width: 50px"
+            [(ngModel)]="row.position" />
+        </td>
+      </form>
+    </ng-container> -->
+
+    
+    <ng-container matColumnDef="order_no">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Order No</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.order_no }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+        <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.type.replace('_',' ') | titlecase }}</td>
+    </ng-container>
+    <ng-container matColumnDef="source_id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
+        <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.source_id ? row.source_id.first_name : '' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="destination_id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destination</th>
+        <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.destination_id ? row.destination_id.first_name : ''}}</td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell style="max-width: 100px;" *matCellDef="let row">{{ row.status.replace('_',' ') | titlecase}}</td>
+    </ng-container>
+    <ng-container matColumnDef="items">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Items</th>
+        <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.items.length }}</td>
+    </ng-container>
+    <ng-container matColumnDef="created_on">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Booked On</th>
+        <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.created_at | date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="slot_date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Date</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.slot_date | date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="slot_id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Slot</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.slot_id ? row.slot_id.start_time + ' - '+ row.slot_id.end_time : '' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="sub_total_amount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Amount</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ row.sub_total_amount }}</td>
+    </ng-container>
+    <ng-container matColumnDef="address_id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+      <td mat-cell style="max-width: 100px" *matCellDef="let row">{{ getAddressString(row.address_id) }}</td>
+    </ng-container>
+
+    <!-- active Column -->
+    <!-- <ng-container matColumnDef="is_active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-slide-toggle
+          [(ngModel)]="row.is_active"
+          (change)="changeActivationStatus(row)"
+          color="primary"
+        ></mat-slide-toggle>
+      </td>
+    </ng-container> -->
+
+   
+    <!-- control column -->
+    <ng-container matColumnDef="controls">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Controls</th>
+      <td mat-cell *matCellDef="let row">
+        <mat-grid-list cols="3" rowHeight="50px">
+          <mat-grid-tile>
+            <button mat-icon-button aria-label="View" matTooltip="View" (click)="openView(row)" >
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <button mat-icon-button aria-label="Delete" matTooltip="Cancel" *ngIf="row.status != 'CANCELLED'" (click)="cancelIcon(row._id)" >
+              <mat-icon color="accent">cancel</mat-icon>
+            </button>
+          </mat-grid-tile>
+          <mat-grid-tile *ngIf="row.status == 'CONFIRMED'">
+            <button mat-icon-button color="primary" matTooltip="Ready for Dispatch" (click)="openDispatchReady(row)" >
+              <mat-icon color="primary">exit_to_app</mat-icon>
+            </button>
+          </mat-grid-tile> 
+          <mat-grid-tile *ngIf="!isCustomerOrder && row.status == 'DISPATCHED' && row.destination_id._id == getuserId">
+            <button mat-icon-button color="primary" matTooltip="Delivery" (click)="deliveryClick(row._id)" [routerLink]="[]">
+              <mat-icon color="primary">assignment_turned_in</mat-icon>
+            </button>
+          </mat-grid-tile> 
+          <mat-grid-tile *ngIf="row.status == 'READY_FOR_DISPATCH' && row.source_id._id == getuserId">
+            <button mat-icon-button color="primary" matTooltip="Dispatch" (click)="dispatchClick(row)">
+              <mat-icon color="primary">local_shipping</mat-icon>
+            </button>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <!-- <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+      </tr> -->
+  </table>
+
+  <!-- <mat-paginator
+    (page)="pageEvent($event)"
+    [length]="pageDetails.totalRecords"
+    [pageSize]="pageDetails.itemsPerPage"
+    [pageSizeOptions]="[5, 10, 25]"
+  ></mat-paginator> -->
+</div>

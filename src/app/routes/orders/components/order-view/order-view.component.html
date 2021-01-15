@@ -1,0 +1,124 @@
+<div fxLayout="row wrap" class="matero-row">
+    <mat-card>
+      <mat-card-title>Order View</mat-card-title>
+      <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              
+        <div fxFlex="15" fxFlex.lt-sm="100">
+          <mat-label><strong> Order # </strong>:</mat-label>
+        </div>
+        <div fxFlex="85" fxFlex.lt-sm="100">
+          <mat-label>{{viewData.order_no}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Source </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.source_id ? viewData.source_id.first_name : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Destination </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.destination_id ? viewData.destination_id.first_name : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Type </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.type.replace('_',' ') | titlecase}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Status </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.status | titlecase}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Customer </strong>:</mat-label>
+        </div>
+
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.customer_id ? viewData.customer_id.first_name : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Raised By </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.raised_by_id ? viewData.raised_by_id.first_name : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Vehicle </strong>:</mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.vehicle_id ? viewData.vehicle_id.type+'-'+(viewData.vehicle_id.imei) : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="20" fxFlex.lt-sm="100">
+            <mat-label><strong> Dispatch Time </strong>:</mat-label>
+        </div>
+        <div fxFlex="30" fxFlex.lt-sm="100">
+            <mat-label>{{viewData.dispatch_time | date}}</mat-label>
+        </div>
+        <!-- "suggested_price": 100, "final_purchase_price": 120, "scaling_loss": 4, "loss_in_transit": 1 -->
+
+
+        <div fxFlex="100" fxFlex.lt-sm="100">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            
+              <ng-container matColumnDef="item_name">
+                <th mat-header-cell *matHeaderCellDef> Item Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.item_name}} </td>
+              </ng-container>
+            
+              <ng-container matColumnDef="booked_item_quantity">
+                <th mat-header-cell *matHeaderCellDef> Item Quantity </th>
+                <td mat-cell *matCellDef="let element"> {{element.booked_item_quantity}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="item_unit_id">
+                <th mat-header-cell *matHeaderCellDef> Item Unit </th>
+                <td mat-cell *matCellDef="let element"> {{element.item_unit_id ? element.item_unit_id.name : ''}} </td>
+              </ng-container>
+
+              <ng-container matColumnDef="wastage_item_quantity">
+                <th mat-header-cell *matHeaderCellDef> wastage Qty </th>
+                <td mat-cell *matCellDef="let element"> {{element.wastage_item_quantity}} </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="suggested_price">
+                <th mat-header-cell *matHeaderCellDef> Suggested Price </th>
+                <td mat-cell *matCellDef="let element"> {{element.suggested_price}} </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="final_purchase_price">
+                <th mat-header-cell *matHeaderCellDef> Final Purchase Price </th>
+                <td mat-cell *matCellDef="let element"> {{element.final_purchase_price}} </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="scaling_loss">
+                <th mat-header-cell *matHeaderCellDef> Scaling Loss </th>
+                <td mat-cell *matCellDef="let element"> {{element.scaling_loss}} </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="loss_in_transit">
+                <th mat-header-cell *matHeaderCellDef> Loss in Transit </th>
+                <td mat-cell *matCellDef="let element"> {{element.loss_in_transit }} </td>
+              </ng-container>
+              
+    
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>        
+        </div>
+
+      </div>
+      <!-- <p>{{viewData | json}}</p> -->
+    </mat-card>
+</div>

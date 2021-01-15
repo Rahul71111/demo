@@ -1,0 +1,134 @@
+<div fxLayout="row wrap" class="matero-row">
+    <mat-card>
+      <mat-card-title>Processing Unit View</mat-card-title>
+      <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              
+        <div fxFlex="15" fxFlex.lt-sm="100">
+          <mat-label><strong> Batch Numer </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+            <mat-label>: {{viewData.batchNumber}}</mat-label>
+        </div>
+  
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Status </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+          <mat-label>: {{viewData.canceledStatus && viewData.canceledStatus == "CANCELED" ? 'Canceled' : 'N/A'}}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Raw Item </strong></mat-label>
+        </div>
+        <div fxFlex="85" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.raw_item_id ? viewData.raw_item_id.name : 'N/A' }}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Consumed Unit </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.consumed_unit_id ? viewData.consumed_unit_id.name : 'N/A' }}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Consumed Qty </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.consumed_quantity }}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Wastage Unit </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.wastage_unit_id ? viewData.wastage_unit_id.name : 'N/A' }}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Wastage Qty </strong></mat-label>
+        </div>
+        <div fxFlex="35" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.wastage_quantity }}</mat-label>
+        </div>
+
+        <div fxFlex="15" fxFlex.lt-sm="100">
+            <mat-label><strong> Sellable Item </strong></mat-label>
+        </div>
+        <div fxFlex="85" fxFlex.lt-sm="100">
+          <mat-label>: {{ viewData.sellable_item_id ? viewData.sellable_item_id.name : 'N/A' }}</mat-label>
+        </div>
+
+        <!-- production table -->                 
+        <div class="mat-elevation-z8" fxFlex="100" fxFlex.lt-sm="100">
+            <table mat-table [dataSource]="production" matSort>
+
+              <ng-container matColumnDef="consumed_unit_id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Production Unit</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.unit_id.name }}
+                </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="consumed_quantity">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Production Qty</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.production_quantity }}
+                </td>
+              </ng-container>
+              
+              <tr mat-header-row *matHeaderRowDef="productionColumn"></tr>
+              <tr mat-row *matRowDef="let row; columns: productionColumn"></tr>
+          
+            </table>                   
+        </div>
+
+        <!-- packing table -->
+        <div class="mat-elevation-z8"  fxFlex="100" fxFlex.lt-sm="100">
+            <table mat-table [dataSource]="packagingMaterial" matSort>
+              
+              <ng-container matColumnDef="item_id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Item</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.item_id.name }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="consumed_unit_id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Consumed Unit</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.consumed_unit_id.name }}
+                </td>
+              </ng-container>
+              
+              <ng-container matColumnDef="consumed_quantity">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Consumed Qty</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.consumed_quantity }}
+                </td>
+              </ng-container>
+          
+              <ng-container matColumnDef="wastage_unit_id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Wastage Unit</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.wastage_unit_id ? row.wastage_unit_id.name : '' }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="wastage_quantity">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Wastage Qty</th>
+                <td mat-cell style="max-width: 100px" *matCellDef="let row">
+                  {{ row.wastage_quantity }}
+                </td>
+              </ng-container>
+              
+              <tr mat-header-row *matHeaderRowDef="packagingMaterialColumn"></tr>
+              <tr mat-row *matRowDef="let row; columns: packagingMaterialColumn"></tr>
+          
+            </table>                   
+          </div>
+
+        
+    </div>
+    </mat-card>
+</div>

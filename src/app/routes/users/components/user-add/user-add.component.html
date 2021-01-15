@@ -1,0 +1,486 @@
+<page-header
+  title="{{ isEditMode ? 'Edit User' : 'New User' }}"
+  [nav]="['home', 'users', 'new']"
+></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>{{
+        isEditMode ? "Edit User" : "New User"
+      }}</mat-card-title>
+
+      <form
+        [formGroup]="userForm"
+        (submit)="onFormSubmit($event)"
+        class="form-field-full"
+      >
+        <mat-accordion class="example-headers-align">
+          <mat-expansion-panel
+            [expanded]="step === 0"
+            (opened)="setStep(0)"
+            hideToggle
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title> Personal data </mat-panel-title>
+              <mat-panel-description>
+                Personal Details
+                <mat-icon>account_circle</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              <!-- first_name -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>First Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="First Name"
+                    formControlName="first_name"
+                    required
+                  />
+                  <mat-error *ngIf="userForm.get('first_name').invalid">
+                    {{ "validations.required" | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- last_name -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Last Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Last Name"
+                    formControlName="last_name"
+                  />
+                  <mat-error *ngIf="userForm.get('last_name').invalid">
+                    {{ "validations.required" | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- contact -->
+              <div fxFlex="34" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Contact</mat-label>
+                  <input
+                    matInput
+                    placeholder="Contact"
+                    type="text"
+                    formControlName="contact"
+                    required
+                  />
+
+                  <mat-error *ngIf="userForm.get('contact').invalid">
+                    {{ "validations.required" | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- email -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Email</mat-label>
+                  <input
+                    matInput
+                    placeholder="Email"
+                    type="email"
+                    formControlName="email"
+                  />
+                  <mat-error *ngIf="userForm.get('email').invalid">
+                    {{ getErrorMessage(userForm) | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- role_id -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Role</mat-label>
+                  <mat-select
+                    formControlName="role_id"
+                    placeholder="User Role"
+                    (selectionChange)="roleChanged()"
+                    required
+                  >
+                    <mat-option
+                      *ngFor="let role of roleList"
+                      [value]="role._id"
+                      >{{ role.name }}</mat-option
+                    >
+                  </mat-select>
+                  <mat-error *ngIf="userForm.get('role_id').invalid">
+                    {{ getErrorMessage(userForm) | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- geneder -->
+              <div fxFlex="34" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Gender</mat-label>
+                  <mat-select formControlName="gender" placeholder="Gender">
+                    <mat-option value="Male">Male</mat-option>
+                    <mat-option value="Female">Female</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="userForm.get('gender').invalid">
+                    {{ getErrorMessage(userForm) | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- dob -->
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field color="accent">
+                  <mat-label>Birthdate</mat-label>
+                  <input
+                    matInput
+                    formControlName="dob"
+                    placeholder="Birthdate"
+                    [matDatepicker]="dob"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dob"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #dob></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <!-- parent id -->
+              <div fxFlex="50" *ngIf="showParent" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Parent User</mat-label>
+                  <mat-select formControlName="parent_id" placeholder="Parent User" required>
+                    <mat-option *ngFor="let user of userList" [value]="user._id" >{{ user.first_name }}</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="userForm.get('parent_id').invalid">
+                    {{ getErrorMessage(userForm) | translate }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- is_active -->
+              <div fxFlex="34" fxFlex.lt-sm="100">
+                <mat-slide-toggle
+                  formControlName="is_active"
+                  style="margin-top: 20px"
+                  color="primary"
+                >
+                  {{ is_active_value ? "Active" : "Inactive" }}
+                </mat-slide-toggle>
+              </div>
+
+              <!-- uid -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>UID</mat-label>
+                  <input matInput placeholder="UID" formControlName="uid" />
+                </mat-form-field>
+              </div>
+
+              <!-- contact_2 -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Alternative Contact</mat-label>
+                  <input
+                    matInput
+                    placeholder="Alternative Contact"
+                    type="number"
+                    formControlName="contact_2"
+                  />
+                </mat-form-field>
+              </div>              
+
+              <!-- family_details -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Family Details</mat-label>
+                  <textarea
+                    matInput
+                    placeholder="Family Details"
+                    formControlName="family_details"
+                    style="resize: none"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+            <mat-action-row>
+              <button
+                mat-button
+                color="primary"
+                type="button"
+                (click)="nextStep()"
+              >
+                Next
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel
+            [expanded]="step === 1"
+            (opened)="setStep(1)"
+            hideToggle
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title> Professional </mat-panel-title>
+              <mat-panel-description>
+                Professional Details
+                <mat-icon>work</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              <!-- previous_occupation -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Previous Occupation</mat-label>
+                  <textarea
+                    matInput
+                    placeholder="Previous Occupation"
+                    formControlName="previous_occupation"
+                    style="resize: none"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+
+              <!-- bank_details -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Bank Details</mat-label>
+                  <textarea
+                    matInput
+                    placeholder="Bank Details"
+                    formControlName="bank_details"
+                    style="resize: none"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+
+              <!-- firm_name -->
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Firm Name</mat-label>
+                  <input
+                    matInput
+                    placeholder="Firm Name"
+                    formControlName="firm_name"
+                  />
+                </mat-form-field>
+              </div>
+
+              <!-- firm_gst -->
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Firm GST</mat-label>
+                  <input
+                    matInput
+                    placeholder="Firm GST"
+                    formControlName="firm_gst"
+                  />
+                </mat-form-field>
+              </div>
+
+              <!-- supplier_of_what -->
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Supplier of What</mat-label>
+                  <input
+                    matInput
+                    placeholder="Supplier of What"
+                    formControlName="supplier_of_what"
+                  />
+                </mat-form-field>
+              </div>
+
+              <!-- reference -->
+              <div fxFlex="50" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Reference</mat-label>
+                  <input
+                    matInput
+                    placeholder="Reference"
+                    formControlName="reference"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-action-row>
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                (click)="prevStep()"
+              >
+                Previous
+              </button>
+              <button
+                mat-button
+                color="primary"
+                type="button"
+                (click)="nextStep()"
+              >
+                Next
+              </button>
+            </mat-action-row>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel
+            [expanded]="step === 2"
+            (opened)="setStep(2)"
+            hideToggle
+          >
+            <mat-expansion-panel-header>
+              <mat-panel-title> Address </mat-panel-title>
+              <mat-panel-description>
+                Type the address Details
+                <mat-icon>map</mat-icon>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div fxLayout="row wrap" fxLayoutGap="8px grid">
+              <!-- current_address -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Current Address</mat-label>
+                  <textarea
+                    matInput
+                    (change)="addressChanged()"
+                    placeholder="Current Address"
+                    formControlName="current_address"
+                    style="resize: none"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+
+              <!-- sameAddress -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <!-- <mat-form-field> -->
+                <!-- <mat-label></mat-label> -->
+                <mat-checkbox
+                  (change)="changeSameAddress()"
+                  formControlName="sameAddress"
+                  >Same As Above</mat-checkbox
+                >
+                <!-- </mat-form-field> -->
+              </div>
+
+              <!-- permanent_address -->
+              <div fxFlex="100" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Permanent Address</mat-label>
+                  <textarea
+                    matInput
+                    placeholder="Permanent Address"
+                    formControlName="permanent_address"
+                    style="resize: none"
+                  ></textarea>
+                </mat-form-field>
+              </div>
+
+              <!-- country_id -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Country</mat-label>
+                  <mat-select formControlName="country_id" placeholder="Country" (selectionChange)="countryChange()">
+                    <mat-option
+                      *ngFor="let item of countryList"
+                      [value]="item._id"
+                      >{{ item.name }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- state_id -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>State</mat-label>
+                  <mat-select formControlName="state_id" (selectionChange)="stateChange()" placeholder="State">
+                    <mat-option
+                      *ngFor="let item of stateList"
+                      [value]="item._id"
+                      >{{ item.name }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- city_id -->
+              <div fxFlex="34" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>City</mat-label>
+                  <mat-select formControlName="city_id" (selectionChange)="cityChange()" placeholder="City">
+                    <mat-option
+                      *ngFor="let item of cityList"
+                      [value]="item._id"
+                      >{{ item.name }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- area_id -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Area</mat-label>
+                  <mat-select formControlName="area_id" placeholder="Area">
+                    <mat-option
+                      *ngFor="let item of areaList"
+                      [value]="item._id"
+                      >{{ item.name }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- location -->
+              <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Location</mat-label>
+                  <input
+                    matInput
+                    placeholder="Location"
+                    formControlName="location"
+                  />
+                </mat-form-field>
+              </div>
+
+              <!-- vehicle_id -->
+              <div fxFlex="34" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Vehicle</mat-label>
+                  <mat-select
+                    formControlName="vehicle_id"
+                    placeholder="Vehicle"
+                  >
+                    <mat-option
+                      *ngFor="let item of vehicleList"
+                      [value]="item._id"
+                      >{{ item.type + " - " + item.regnumber }}</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-action-row>
+              <button
+                mat-button
+                color="warn"
+                type="button"
+                (click)="prevStep()"
+              >
+                Previous
+              </button>
+              <button mat-button color="primary" type="submit">Save</button>
+            </mat-action-row>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </form>
+    </mat-card>
+  </div>
+</div>

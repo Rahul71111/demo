@@ -1,0 +1,23 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td,
+th {
+  width: auto;
+}
+.itemimg {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  transform-origin: 0 0;
+  transition: transform 0.25s, visibility 0.25s ease-in;
+}
+.itemimg:hover {
+  transform: scale(2);
+}

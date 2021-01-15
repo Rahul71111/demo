@@ -1,0 +1,98 @@
+<page-header title="{{ isEditMode ? 'Edit Banner': 'New Banner'}}" [nav]="['home','banners','new']"></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+    <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+      <mat-card>
+        <mat-card-title>{{ isEditMode ? 'Edit Banner': 'New Banner'}} </mat-card-title>
+  
+        <form [formGroup]="bannerForm" (submit)="onFormSubmit($event);" class="form-field-full">
+          <div fxLayout="row wrap" fxLayoutGap="8px grid">
+            
+            <div fxFlex="33" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input matInput placeholder="Banner Name" formControlName="name"
+                       required>
+                <mat-error *ngIf="bannerForm.get('name').invalid">
+                  {{'validations.required' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="33" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Image Url</mat-label>
+                  <input matInput placeholder="Image Url" type="text"
+                         formControlName="banner_image_url" required>
+                  <!-- <input type="file" #file (change)="fileUpladChange($event)"
+                         formControlName="category_img" hidden="true"> -->
+                  <!-- <button mat-button type="button" matSuffix mat-icon-button aria-label="Upload"
+                    (click)="file.click()">
+                    <mat-icon>folder</mat-icon>
+                  </button> -->
+                  <mat-error *ngIf="bannerForm.get('banner_image_url').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+            <div fxFlex="34" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Position</mat-label>
+                <input matInput placeholder="Position Order" formControlName="position"
+                       required min="0" type="number">
+                <mat-error *ngIf="bannerForm.get('position').invalid">
+                  {{'validations.required' | translate}}
+                </mat-error>
+              </mat-form-field>
+            </div>
+            
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Banner Redirect Url</mat-label>
+                  <input matInput placeholder="Redirect Url" formControlName="banner_redirect_url">
+                  <!-- <mat-error *ngIf="bannerForm.get('banner_redirect_url').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error> -->
+                </mat-form-field>
+            </div>
+  
+            <div fxFlex="25" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category_id" placeholder="Category" required>
+                    <mat-option *ngFor="let cate of categoryList" [value]="cate._id">{{cate.name}}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="bannerForm.get('category_id').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Type</mat-label>
+                  <mat-select formControlName="type" placeholder="Type" required>
+                      <mat-option value="ITEM_BANNER">ITEM BANNER</mat-option>
+                      <mat-option value="TOP_BANNER">TOP BANNER</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="bannerForm.get('type').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+              <mat-slide-toggle formControlName="is_active" style="margin-top: 20px;" color="primary">
+                {{is_active_value ? 'Active' : 'Inactive'}}
+              </mat-slide-toggle>
+            </div>
+  
+          </div>
+  
+          <button mat-raised-button color="primary" type="submit" style="margin-right: 5px;" class="m-t-8">Save</button>
+          <button mat-raised-button type="button" [routerLink]="['/banners']"  class="m-t-8"> Back</button>
+        </form>
+  
+      </mat-card>
+    </div>
+</div>

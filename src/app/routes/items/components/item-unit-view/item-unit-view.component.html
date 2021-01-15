@@ -1,0 +1,84 @@
+<h1 mat-dialog-title>Item Units</h1>
+
+<mat-dialog-content class="mat-typography" style="min-width: 30%;">
+    <p>Note: Discount will affect automatically.</p>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        
+        <ng-container matColumnDef="price_edit">
+          <th mat-header-cell *matHeaderCellDef> Price </th>
+          <td mat-cell *matCellDef="let element"> 
+            <input type="number" 
+            [ngModelOptions]="{standalone: true}" 
+            (change)="changePrice(element)" 
+            style="max-width: 65px;"  min="0" [(ngModel)]="element.price" />
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef> Price </th>
+          <td mat-cell *matCellDef="let element"> 
+            {{element.price}} 
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="discount_value">
+          <th mat-header-cell *matHeaderCellDef> Discount </th>
+          <td mat-cell *matCellDef="let element" style="padding-left: 10px;"> 
+            {{(element.discount_value ? element.discount_value : '') + (!element.discount_type || element.discount_type == 'FLAT' || element.discount_type == '' ? '' : '%')}} 
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="discounted_price">
+          <th mat-header-cell *matHeaderCellDef> Discounted Price </th>
+          <td mat-cell *matCellDef="let element" style="padding-left: 10px;"> {{element.discounted_price}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="qty">
+          <th mat-header-cell *matHeaderCellDef> Quantity </th>
+          <td mat-cell *matCellDef="let element" style="padding-left: 10px;"> {{element.item_quantity}} </td>
+        </ng-container>
+      
+        <ng-container matColumnDef="unit">
+          <th mat-header-cell *matHeaderCellDef> Unit </th>
+          <td mat-cell *matCellDef="let element"> {{element.unit_id ? element.unit_id.name : ''}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="item_barcode">
+          <th mat-header-cell *matHeaderCellDef> Item Barcode </th>
+          <td mat-cell *matCellDef="let element"> 
+            <input [ngModelOptions]="{standalone: true}" 
+            (change)="changePrice(element)" 
+            style="max-width: 65px;" [(ngModel)]="element.item_barcode" />
+          </td>
+          <!-- <td mat-cell *matCellDef="let element"> {{element.item_barcode}} </td> -->
+        </ng-container>
+        
+        <ng-container matColumnDef="is_customer_show_edit">
+          <th mat-header-cell *matHeaderCellDef> Is Default </th>
+          <td mat-cell *matCellDef="let element; let i = index;"> 
+            <!-- {{element.is_customer_show}} -->
+            <mat-radio-group [(ngModel)]="defaultUnitId">
+              <mat-radio-button name="is_customer_show" (change)="radioChange($event)"  [value]="i">
+                {{''}}
+              </mat-radio-button>
+            </mat-radio-group>
+           </td>
+        </ng-container>
+
+        <ng-container matColumnDef="is_customer_show">
+          <th mat-header-cell *matHeaderCellDef> Is Default </th>
+          <td mat-cell *matCellDef="let element"> 
+            {{element.is_customer_show ? 'Default' : ''}}
+           </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <br>
+    <!-- <p>{{data|json}}</p> -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <!-- <button mat-button mat-dialog-close>Close</button> -->
+    <button mat-button [mat-dialog-close]="isAnyChange" cdkFocusInitial>Close</button>
+</mat-dialog-actions>

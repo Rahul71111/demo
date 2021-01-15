@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Dispatch Order</h1>
+
+<mat-dialog-content class="mat-typography" style="min-width: 30%;">
+    <div fxLayout="row wrap" class="matero-row">
+        <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+            <mat-card>
+                <div fxLayout="row wrap" fxLayoutGap="8px grid">
+                    <div fxFlex="25" fxFlex.lt-sm="100">
+                        <mat-form-field>
+                            <mat-label>Vehicle</mat-label>
+                            <mat-select [(ngModel)]="vehicle_id" placeholder="Vehicle">
+                                <mat-option *ngFor="let vehicle of vehicleList" [value]="vehicle._id">
+                                    {{ vehicle.type + ' - ' + vehicle.regnumber }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+    </div>    
+    <!-- <p>{{data|json}}</p> -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="dispatchClick()" >Dispatch</button>
+    <button mat-raised-button [mat-dialog-close]="isAnyChange" cdkFocusInitial>Close</button>
+</mat-dialog-actions>

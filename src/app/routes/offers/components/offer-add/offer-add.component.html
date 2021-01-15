@@ -1,0 +1,189 @@
+<page-header title="{{ isEditMode ? 'Edit Offer' : 'New Offer' }}" [nav]="['home', 'offer', 'new']" ></page-header>
+
+<div fxLayout="row wrap" class="matero-row">
+  <div fxFlex="100" fxFlex.lt-sm="100" class="matero-col">
+    <mat-card>
+      <mat-card-title>
+          {{ isEditMode ? "Edit Item" : "New Item" }}
+      </mat-card-title>
+
+      <form [formGroup]="offerForm" (submit)="onFormSubmit($event)" class="form-field-full" >
+        <div fxLayout="row wrap" fxLayoutGap="8px grid">
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                    <mat-label>Offer Type</mat-label>
+                    <mat-select formControlName="offer_type" (selectionChange)="offerTypeChanged()"
+                        placeholder="Offer Type" required>
+                        <mat-option *ngFor="let offer of offerTypeList" [value]="offer.value" >
+                            {{ offer.name }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="offerForm.get('offer_type').invalid">
+                        {{ "validations.required" | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+              <mat-form-field>
+                  <mat-label>User Role</mat-label>
+                  <mat-select formControlName="user_role" (selectionChange)="userRoleChanged()"
+                      placeholder="User Role" required>
+                      <mat-option value="DEPO">Depo</mat-option>
+                      <mat-option value="CUSTOMER">Customer</mat-option>
+                      <mat-option value="FRANCHISE">Franchise</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="offerForm.get('user_role').invalid">
+                      {{ "validations.required" | translate }}
+                  </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div fxFlex="25" *ngIf="isTypeItemCategory" fxFlex.lt-sm="100">
+                <mat-form-field>
+                    <mat-label>Offer On</mat-label>
+                    <mat-select formControlName="offer_on_ids"
+                        placeholder="Offer On" multiple>
+                        <mat-option *ngFor="let item of offerOnItem" [value]="item._id">
+                            {{ item.name }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="offerForm.get('offer_on_ids').invalid">
+                        {{ "validations.required" | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-slide-toggle formControlName="is_active" style="margin-top: 20px" color="primary" >
+                  {{ is_active_value ? "Active" : "Inactive" }}
+                </mat-slide-toggle>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+              <mat-form-field>
+                <mat-label>Min Value</mat-label>
+                <input matInput placeholder="Min Value" formControlName="min_value"
+                       required min="0" type="number">
+                <mat-error *ngIf="offerForm.get('min_value').invalid">
+                  {{'validations.required' | translate}}
+                </mat-error>
+              </mat-form-field>
+          </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Usage Count</mat-label>
+                  <input matInput placeholder="Usage Count" formControlName="usage_count"
+                         required min="0" type="number">
+                  <mat-error *ngIf="offerForm.get('usage_count').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                    <mat-label>Discount Type</mat-label>
+                    <mat-select formControlName="discount_type"
+                        placeholder="Discount type" required>
+                        <mat-option value="FLAT">Flat</mat-option>
+                        <mat-option value="PERCENTAGE">Percentage</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="offerForm.get('discount_type').invalid">
+                        {{ "validations.required" | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Discount Value</mat-label>
+                  <input matInput placeholder="Discount Value" formControlName="discount_value"
+                         required min="0" type="number">
+                  <mat-error *ngIf="offerForm.get('discount_value').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Expiry</mat-label>
+                  <input matInput [matDatepicker]="dp3" disabled [min]="minDate" formControlName="expiry" required>
+                  <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                  <mat-datepicker #dp3 disabled="false" ></mat-datepicker>
+                  <!-- <input matInput placeholder="Expiry" type="date" [min]="minDate" formControlName="expiry" required /> -->
+                  <mat-error *ngIf="offerForm.get('expiry').invalid">
+                    {{ "validations.required" | translate }}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" *ngIf="!isTypeItemCategory" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Coupon Code</mat-label>
+                  <input matInput placeholder="Coupon Code" formControlName="coupon_code" required />
+                  <mat-error *ngIf="offerForm.get('coupon_code').invalid">
+                    {{ "validations.required" | translate }}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" *ngIf="!isTypeItemCategory || isTypeItemCategoryWithDepo" fxFlex.lt-sm="100">
+                <mat-form-field>
+                    <mat-label>User</mat-label>
+                    <mat-select formControlName="user_id"
+                        placeholder="User">
+                        <mat-option *ngFor="let user of usersList" [value]="user._id" >
+                            {{ user.first_name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" *ngIf="isAgeType" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Age</mat-label>
+                  <input matInput placeholder="Age" formControlName="age"
+                         required min="0" type="number">
+                  <mat-error *ngIf="offerForm.get('age').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Position</mat-label>
+                  <input matInput placeholder="Position" formControlName="position"
+                         min="0" type="number">
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="25" *ngIf="isGenderType" fxFlex.lt-sm="100">
+                <mat-form-field>
+                  <mat-label>Gender</mat-label>
+                  <mat-select formControlName="gender"
+                        placeholder="Gender" required>
+                        <mat-option value="MALE">Male</mat-option>
+                        <mat-option value="FEMALE">Female</mat-option>
+                    </mat-select>
+                  <mat-error *ngIf="offerForm.get('gender').invalid">
+                    {{'validations.required' | translate}}
+                  </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" style="margin-right: 5px" class="m-t-8">
+          Save
+        </button>
+        <button mat-raised-button type="button" [routerLink]="['/offers']" class="m-t-8">
+          Back
+        </button>
+      </form>
+    </mat-card>
+  </div>
+</div>
